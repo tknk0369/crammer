@@ -4,6 +4,7 @@
     package="io.github.tknk0369.crammer">
 
     <application
+        android:name="CrammerApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -14,9 +15,8 @@
         android:theme="@style/Theme.Crammer"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
             android:theme="@style/Theme.Crammer">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
