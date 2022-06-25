@@ -13,4 +13,7 @@ interface KnowledgeListDao {
 
     @Delete
     fun delete(knowledgeList: KnowledgeListEntity)
+
+    @Query("select * from knowledge_list")
+    fun selectAll(): List<KnowledgeListEntity>
 }
