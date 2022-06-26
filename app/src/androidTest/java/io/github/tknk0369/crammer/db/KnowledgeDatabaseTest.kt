@@ -6,9 +6,8 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.tknk0369.crammer.data.db.dao.KnowledgeDao
 import io.github.tknk0369.crammer.data.db.entity.KnowledgeEntity
-import io.github.tknk0369.crammer.data.db.entity.KnowledgeListEntity
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -31,7 +30,7 @@ class KnowledgeDatabaseTest {
     }
 
     @Test
-    fun insertKnowledge() = runBlockingTest {
+    fun insertKnowledge() = runTest {
         val ex = KnowledgeEntity("a", "b", "c", "d")
         assertThat(knowledgeDao.selectAll()).isEqualTo(listOf<KnowledgeEntity>())
         knowledgeDao.insert(ex)
@@ -39,7 +38,7 @@ class KnowledgeDatabaseTest {
     }
 
     @Test
-    fun deleteKnowledge() = runBlockingTest {
+    fun deleteKnowledge() =runTest {
         val ex = KnowledgeEntity("a", "b", "c", "d")
         val ex2 = KnowledgeEntity("e", "f", "g", "h")
         assertThat(knowledgeDao.selectAll()).isEqualTo(listOf<KnowledgeEntity>())
@@ -51,7 +50,7 @@ class KnowledgeDatabaseTest {
     }
 
     @Test
-    fun updateKnowledge() = runBlockingTest {
+    fun updateKnowledge() = runTest {
         val ex = KnowledgeEntity("a", "b", "c", "d")
         val ex2 = KnowledgeEntity("a", "f", "g", "h")
         assertThat(knowledgeDao.selectAll()).isEqualTo(listOf<KnowledgeEntity>())
