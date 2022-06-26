@@ -43,34 +43,34 @@ class KnowledgeListRepositoryTest {
     @Test
     fun addKnowledgeList() = runTest {
         val ex = KnowledgeListEntity("a", "b", "c")
-        Truth.assertThat(knowledgeListRepository.getKnowledgeList())
+        Truth.assertThat(knowledgeListRepository.getKnowledgeLists())
             .isEqualTo(listOf<KnowledgeListEntity>())
         knowledgeListRepository.addKnowledgeList(ex)
-        Truth.assertThat(knowledgeListRepository.getKnowledgeList()).isEqualTo(listOf(ex))
+        Truth.assertThat(knowledgeListRepository.getKnowledgeLists()).isEqualTo(listOf(ex))
     }
 
     @Test
     fun deleteKnowledgeList() = runTest {
         val ex = KnowledgeListEntity("a", "b", "c")
         val ex2 = KnowledgeListEntity("d", "e", "f")
-        Truth.assertThat(knowledgeListRepository.getKnowledgeList())
+        Truth.assertThat(knowledgeListRepository.getKnowledgeLists())
             .isEqualTo(listOf<KnowledgeListEntity>())
         knowledgeListRepository.addKnowledgeList(ex)
         knowledgeListRepository.addKnowledgeList(ex2)
-        Truth.assertThat(knowledgeListRepository.getKnowledgeList()).isEqualTo(listOf(ex, ex2))
+        Truth.assertThat(knowledgeListRepository.getKnowledgeLists()).isEqualTo(listOf(ex, ex2))
         knowledgeListRepository.deleteKnowledgeList(ex2)
-        Truth.assertThat(knowledgeListRepository.getKnowledgeList()).isEqualTo(listOf(ex))
+        Truth.assertThat(knowledgeListRepository.getKnowledgeLists()).isEqualTo(listOf(ex))
     }
 
     @Test
     fun updateKnowledgeList() = runTest {
         val ex = KnowledgeListEntity("a", "b", "c")
         val ex2 = KnowledgeListEntity("a", "e", "f")
-        Truth.assertThat(knowledgeListRepository.getKnowledgeList())
+        Truth.assertThat(knowledgeListRepository.getKnowledgeLists())
             .isEqualTo(listOf<KnowledgeListEntity>())
         knowledgeListRepository.addKnowledgeList(ex)
-        Truth.assertThat(knowledgeListRepository.getKnowledgeList()).isEqualTo(listOf(ex))
+        Truth.assertThat(knowledgeListRepository.getKnowledgeLists()).isEqualTo(listOf(ex))
         knowledgeListRepository.updateKnowledgeList(ex2)
-        Truth.assertThat(knowledgeListRepository.getKnowledgeList()).isEqualTo(listOf(ex2))
+        Truth.assertThat(knowledgeListRepository.getKnowledgeLists()).isEqualTo(listOf(ex2))
     }
 }

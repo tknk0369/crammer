@@ -7,7 +7,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 interface KnowledgeRepository {
-    fun getKnowledge(): List<KnowledgeEntity>
+    fun getKnowledges(): List<KnowledgeEntity>
 
     suspend fun addKnowledge(knowledge: KnowledgeEntity)
 
@@ -20,7 +20,7 @@ class KnowledgeRepositoryImpl @Inject constructor() : KnowledgeRepository {
     @Inject
     lateinit var knowledgeDao: KnowledgeDao
 
-    override fun getKnowledge(): List<KnowledgeEntity> = knowledgeDao.selectAll()
+    override fun getKnowledges(): List<KnowledgeEntity> = knowledgeDao.selectAll()
 
     override suspend fun addKnowledge(knowledge: KnowledgeEntity) {
         withContext(Dispatchers.IO) {
