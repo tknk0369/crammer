@@ -1,4 +1,4 @@
-package io.github.tknk0369.crammer.di
+package io.github.tknk0369.crammer
 
 import android.content.Context
 import dagger.Module
