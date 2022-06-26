@@ -28,4 +28,10 @@ object TestModule {
     fun provideKnowledgeListDao(
         db: AppDatabase
     ) = db.knowledgeListDao()
+
+    @Singleton
+    @Provides
+    fun provideKnowledgeDao(
+        db: AppDatabase
+    ) = db.knowledgeDao()
 }
