@@ -9,6 +9,8 @@ import dagger.hilt.components.SingletonComponent
 import io.github.tknk0369.crammer.data.db.AppDatabase
 import io.github.tknk0369.crammer.data.repository.KnowledgeListRepository
 import io.github.tknk0369.crammer.data.repository.KnowledgeListRepositoryImpl
+import io.github.tknk0369.crammer.data.repository.KnowledgeRepository
+import io.github.tknk0369.crammer.data.repository.KnowledgeRepositoryImpl
 import javax.inject.Singleton
 
 @Module
@@ -37,4 +39,10 @@ object AppModule {
     fun provideKnowledgeListRepository(
         knowledgeListRepositoryImpl: KnowledgeListRepositoryImpl
     ): KnowledgeListRepository = knowledgeListRepositoryImpl
+
+    @Singleton
+    @Provides
+    fun provideKnowledgeRepository(
+        knowledgeRepositoryImpl: KnowledgeRepositoryImpl
+    ): KnowledgeRepository = knowledgeRepositoryImpl
 }
