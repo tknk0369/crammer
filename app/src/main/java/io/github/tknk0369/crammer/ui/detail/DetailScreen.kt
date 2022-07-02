@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -21,13 +22,16 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.github.tknk0369.crammer.ui.components.EditDialog
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
 @Composable
 fun DetailScreen(
     navHostController: NavHostController,
     id: String?,
-    viewModel: DetailViewModel = hiltViewModel()
+    viewModel: DetailViewModel = hiltViewModel(),
+    coroutineScope: CoroutineScope = rememberCoroutineScope()
 ) {
     LaunchedEffect(Unit) {
         viewModel.init(id)
@@ -35,6 +39,8 @@ fun DetailScreen(
     val scrollState = rememberLazyListState()
     val name by viewModel.name.collectAsState()
     val knowledge by viewModel.knowledge.collectAsState()
+    val questionFocusRequester = remember { FocusRequester() }
+    val answerFocusRequester = remember { FocusRequester() }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -51,12 +57,22 @@ fun DetailScreen(
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {
+                    coroutineScope.launch {
+                        scrollState.animateScrollToItem(0)
+                        questionFocusRequester.requestFocus()
+                    }
+                }
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "add")
+            }
         }
     ) { paddingValues ->
         var newQuestion by rememberSaveable { mutableStateOf("") }
         var answer by rememberSaveable { mutableStateOf("") }
-        val questionFocusRequester = remember { FocusRequester() }
-        val answerFocusRequester = remember { FocusRequester() }
         LazyColumn(
             modifier = Modifier.padding(paddingValues),
             state = scrollState
