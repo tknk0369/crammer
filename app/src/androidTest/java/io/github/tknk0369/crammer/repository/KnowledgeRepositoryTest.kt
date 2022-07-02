@@ -1,7 +1,7 @@
 package io.github.tknk0369.crammer.repository
 
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import com.google.common.truth.Truth
+import com.google.common.truth.Truth.assertThat
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.tknk0369.crammer.data.db.entity.KnowledgeEntity
@@ -43,34 +43,34 @@ class KnowledgeRepositoryTest {
     @Test
     fun addKnowledge() = runTest {
         val ex = KnowledgeEntity("a", "b", "c", "d")
-        Truth.assertThat(knowledgeRepository.getKnowledges())
+        assertThat(knowledgeRepository.getKnowledges())
             .isEqualTo(listOf<KnowledgeEntity>())
         knowledgeRepository.addKnowledge(ex)
-        Truth.assertThat(knowledgeRepository.getKnowledges()).isEqualTo(listOf(ex))
+        assertThat(knowledgeRepository.getKnowledges()).isEqualTo(listOf(ex))
     }
 
     @Test
     fun deleteKnowledge() = runTest {
         val ex = KnowledgeEntity("a", "b", "c", "d")
         val ex2 = KnowledgeEntity("e", "f", "g", "h")
-        Truth.assertThat(knowledgeRepository.getKnowledges())
+        assertThat(knowledgeRepository.getKnowledges())
             .isEqualTo(listOf<KnowledgeEntity>())
         knowledgeRepository.addKnowledge(ex)
         knowledgeRepository.addKnowledge(ex2)
-        Truth.assertThat(knowledgeRepository.getKnowledges()).isEqualTo(listOf(ex, ex2))
+        assertThat(knowledgeRepository.getKnowledges()).isEqualTo(listOf(ex, ex2))
         knowledgeRepository.deleteKnowledge(ex2)
-        Truth.assertThat(knowledgeRepository.getKnowledges()).isEqualTo(listOf(ex))
+        assertThat(knowledgeRepository.getKnowledges()).isEqualTo(listOf(ex))
     }
 
     @Test
     fun updateKnowledge() = runTest {
         val ex = KnowledgeEntity("a", "b", "c", "d")
         val ex2 = KnowledgeEntity("a", "f", "g", "h")
-        Truth.assertThat(knowledgeRepository.getKnowledges())
+        assertThat(knowledgeRepository.getKnowledges())
             .isEqualTo(listOf<KnowledgeEntity>())
         knowledgeRepository.addKnowledge(ex)
-        Truth.assertThat(knowledgeRepository.getKnowledges()).isEqualTo(listOf(ex))
+        assertThat(knowledgeRepository.getKnowledges()).isEqualTo(listOf(ex))
         knowledgeRepository.updateKnowledge(ex2)
-        Truth.assertThat(knowledgeRepository.getKnowledges()).isEqualTo(listOf(ex2))
+        assertThat(knowledgeRepository.getKnowledges()).isEqualTo(listOf(ex2))
     }
 }
