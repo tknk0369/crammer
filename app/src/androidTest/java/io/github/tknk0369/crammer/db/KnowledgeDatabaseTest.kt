@@ -6,8 +6,10 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.tknk0369.crammer.data.db.dao.KnowledgeDao
 import io.github.tknk0369.crammer.data.db.entity.KnowledgeEntity
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.*
+import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -27,6 +29,12 @@ class KnowledgeDatabaseTest {
     @Before
     fun setup() {
         rule.inject()
+        Dispatchers.setMain(UnconfinedTestDispatcher())
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
     }
 
     @Test

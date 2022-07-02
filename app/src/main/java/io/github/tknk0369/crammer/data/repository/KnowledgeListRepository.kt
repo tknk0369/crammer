@@ -3,6 +3,7 @@ package io.github.tknk0369.crammer.data.repository
 import io.github.tknk0369.crammer.data.db.dao.KnowledgeListDao
 import io.github.tknk0369.crammer.data.db.entity.KnowledgeListEntity
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
@@ -16,6 +17,8 @@ interface KnowledgeListRepository {
     suspend fun deleteKnowledgeList(knowledgeList: KnowledgeListEntity)
 
     suspend fun getKnowledgeListFromId(id: String?): Result<KnowledgeListEntity>
+
+    val getKnowledgeListsRealTime: Flow<List<KnowledgeListEntity>>
 }
 
 class KnowledgeListRepositoryImpl @Inject constructor() : KnowledgeListRepository {
@@ -49,4 +52,7 @@ class KnowledgeListRepositoryImpl @Inject constructor() : KnowledgeListRepositor
             }
         }
     }
+
+    override val getKnowledgeListsRealTime: Flow<List<KnowledgeListEntity>>
+        get() = knowledgeListDao.selectAllFlow()
 }

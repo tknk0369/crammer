@@ -2,6 +2,7 @@ package io.github.tknk0369.crammer.data.db.dao
 
 import androidx.room.*
 import io.github.tknk0369.crammer.data.db.entity.KnowledgeListEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface KnowledgeListDao {
@@ -19,4 +20,7 @@ interface KnowledgeListDao {
 
     @Query("select * from knowledge_list where id = :id")
     fun selectFromId(id: String): KnowledgeListEntity
+
+    @Query("select * from knowledge_list")
+    fun selectAllFlow(): Flow<List<KnowledgeListEntity>>
 }

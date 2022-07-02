@@ -8,6 +8,8 @@ import io.github.tknk0369.crammer.data.db.entity.KnowledgeListEntity
 import io.github.tknk0369.crammer.data.repository.KnowledgeListRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -84,5 +86,26 @@ class KnowledgeListRepositoryTest {
         knowledgeListRepository.addKnowledgeList(ex2)
         assertThat(knowledgeListRepository.getKnowledgeListFromId("a").getOrNull()).isEqualTo(ex)
         assertThat(knowledgeListRepository.getKnowledgeListFromId("d").getOrNull()).isEqualTo(ex2)
+    }
+
+    @Test
+    fun getKnowledgeListsRealTime() = runTest {
+        val list = mutableListOf<List<KnowledgeListEntity>>()
+        val ex = KnowledgeListEntity("a", "b", "c")
+        val ex2 = KnowledgeListEntity("a", "d", "c")
+        knowledgeListRepository.getKnowledgeListsRealTime.take(4).collectIndexed { index, value ->
+            list.add(value)
+            when (index) {
+                0 -> knowledgeListRepository.addKnowledgeList(ex)
+                1 -> knowledgeListRepository.updateKnowledgeList(ex2)
+                2 -> knowledgeListRepository.deleteKnowledgeList(ex2)
+            }
+        }
+        assertThat(list).containsExactly(
+            listOf<KnowledgeListEntity>(),
+            listOf(KnowledgeListEntity("a", "b", "c")),
+            listOf(KnowledgeListEntity("a", "d", "c")),
+            listOf<KnowledgeListEntity>()
+        )
     }
 }
