@@ -22,6 +22,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.github.tknk0369.crammer.ui.Screen
+import io.github.tknk0369.crammer.ui.components.NameDialog
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -56,64 +57,19 @@ fun HomeScreen(
         sheetShape = RoundedCornerShape(8.dp, 8.dp)
     ) {
         if (newListDialog) {
-            val focusRequester = remember {
-                FocusRequester()
-            }
-            LaunchedEffect(Unit) {
-                focusRequester.requestFocus()
-            }
-            Dialog(
-                onDismissRequest = { newListDialog = false },
-            ) {
-                var name by rememberSaveable { mutableStateOf("") }
-                Surface(
-                    shape = RoundedCornerShape(8.dp)
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .fillMaxWidth(),
-                    ) {
-                        Text(
-                            text = "Add New List",
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Medium,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp),
-                        )
-                        OutlinedTextField(
-                            value = name,
-                            onValueChange = { name = it },
-                            singleLine = true,
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp)
-                                .focusRequester(focusRequester)
-                        )
-                        Row(
-                            horizontalArrangement = Arrangement.End,
-                            modifier = Modifier.fillMaxWidth()
-                        ) {
-                            TextButton(
-                                onClick = {
-                                    newListDialog = false
-                                }
-                            ) {
-                                Text(text = "Cancel")
-                            }
-                            TextButton(
-                                onClick = {
-                                    viewModel.addNewKnowledgeList(name)
-                                    newListDialog = false
-                                }
-                            ) {
-                                Text(text = "Ok")
-                            }
-                        }
-                    }
-                }
-            }
+            NameDialog(
+                title = "Add New List",
+                onDismissRequest = {
+                    newListDialog = false
+                },
+                cancel = {
+                    newListDialog = false
+                },
+                ok = { name ->
+                    viewModel.addNewKnowledgeList(name)
+                    newListDialog = false
+                },
+            )
         }
         Scaffold(
             topBar = {
@@ -137,6 +93,12 @@ fun HomeScreen(
         ) { paddingValues ->
             LazyColumn(modifier = Modifier.padding(paddingValues)) {
                 items(items = knowledgeList.value, key = { it.id }) {
+                    var rename by rememberSaveable {
+                        mutableStateOf(false)
+                    }
+                    var expanded by rememberSaveable {
+                        mutableStateOf(false)
+                    }
                     ListItem(
                         modifier = Modifier.clickable {
                             navHostController.navigate(Screen.Detail.createRoute(it.id))
@@ -148,9 +110,6 @@ fun HomeScreen(
                             )
                         },
                         trailing = {
-                            var expanded by rememberSaveable {
-                                mutableStateOf(false)
-                            }
                             IconButton(
                                 onClick = {
                                     expanded = true
@@ -164,15 +123,35 @@ fun HomeScreen(
                             ) {
                                 DropdownMenuItem(
                                     onClick = {
+                                        rename = true
+                                    }
+                                ) {
+                                    Text("Rename")
+                                }
+                                DropdownMenuItem(
+                                    onClick = {
                                         viewModel.deleteKnowledgeList(it)
                                     }
                                 ) {
                                     Text("Delete")
                                 }
                             }
+
                         }
                     ) {
                         Text(text = it.name)
+                        if (rename) {
+                            NameDialog(
+                                defaultName = it.name,
+                                title = "New Name",
+                                onDismissRequest = { rename = false },
+                                cancel = { rename = false },
+                                ok = { name ->
+                                    viewModel.renameKnowledgeList(it, name)
+                                    rename = false
+                                }
+                            )
+                        }
                     }
                 }
             }

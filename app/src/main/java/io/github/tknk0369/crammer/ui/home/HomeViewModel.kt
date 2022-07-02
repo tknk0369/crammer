@@ -23,6 +23,12 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun renameKnowledgeList(knowledgeList: KnowledgeListEntity, name: String) {
+        viewModelScope.launch {
+            knowledgeListRepository.updateKnowledgeList(knowledgeList.copy(name = name))
+        }
+    }
+
     fun deleteKnowledgeList(knowledgeList: KnowledgeListEntity) {
         viewModelScope.launch {
             knowledgeListRepository.deleteKnowledgeList(knowledgeList)
