@@ -6,8 +6,11 @@ import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import io.github.tknk0369.crammer.data.db.dao.KnowledgeDao
 import io.github.tknk0369.crammer.data.db.entity.KnowledgeEntity
+import io.github.tknk0369.crammer.data.db.entity.KnowledgeListEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collectIndexed
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.test.*
 import org.junit.After
 import org.junit.Before
@@ -46,7 +49,7 @@ class KnowledgeDatabaseTest {
     }
 
     @Test
-    fun deleteKnowledge() =runTest {
+    fun deleteKnowledge() = runTest {
         val ex = KnowledgeEntity("a", "b", "c", "d")
         val ex2 = KnowledgeEntity("e", "f", "g", "h")
         assertThat(knowledgeDao.selectAll()).isEqualTo(listOf<KnowledgeEntity>())
@@ -66,5 +69,26 @@ class KnowledgeDatabaseTest {
         assertThat(knowledgeDao.selectAll()).isEqualTo(listOf(ex))
         knowledgeDao.update(ex2)
         assertThat(knowledgeDao.selectAll()).isEqualTo(listOf(ex2))
+    }
+
+    @Test
+    fun selectFromListIdFlow() = runTest {
+        val list = mutableListOf<List<KnowledgeEntity>>()
+        val ex = KnowledgeEntity("a", "id", "c", "d")
+        val ex2 = KnowledgeEntity("a", "id", "g", "h")
+        knowledgeDao.selectFromListIdFlow("id").take(4).collectIndexed { index, value ->
+            list.add(value)
+            when (index) {
+                0 -> knowledgeDao.insert(ex)
+                1 -> knowledgeDao.update(ex2)
+                2 -> knowledgeDao.delete(ex2)
+            }
+        }
+        assertThat(list).containsExactly(
+            listOf<KnowledgeEntity>(),
+            listOf(ex),
+            listOf(ex2),
+            listOf<KnowledgeEntity>(),
+        )
     }
 }
