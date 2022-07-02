@@ -15,7 +15,7 @@ interface KnowledgeListRepository {
 
     suspend fun deleteKnowledgeList(knowledgeList: KnowledgeListEntity)
 
-    suspend fun getKnowledgeListFromId(id: String): KnowledgeListEntity
+    suspend fun getKnowledgeListFromId(id: String?): Result<KnowledgeListEntity>
 }
 
 class KnowledgeListRepositoryImpl @Inject constructor() : KnowledgeListRepository {
@@ -42,9 +42,11 @@ class KnowledgeListRepositoryImpl @Inject constructor() : KnowledgeListRepositor
         }
     }
 
-    override suspend fun getKnowledgeListFromId(id: String): KnowledgeListEntity {
+    override suspend fun getKnowledgeListFromId(id: String?): Result<KnowledgeListEntity> {
         return withContext(Dispatchers.IO) {
-            knowledgeListDao.selectFromId(id)
+            runCatching {
+                knowledgeListDao.selectFromId(id!!)
+            }
         }
     }
 }

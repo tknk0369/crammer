@@ -78,11 +78,11 @@ class KnowledgeListRepositoryTest {
     fun getKnowledgeListFromId() = runTest {
         val ex = KnowledgeListEntity("a", "b", "c")
         val ex2 = KnowledgeListEntity("d", "e", "f")
-        assertThat(knowledgeListRepository.getKnowledgeListFromId("a")).isNull()
-        assertThat(knowledgeListRepository.getKnowledgeListFromId("a")).isNull()
+        assertThat(knowledgeListRepository.getKnowledgeListFromId("a").getOrNull()).isNull()
+        assertThat(knowledgeListRepository.getKnowledgeListFromId("a").getOrNull()).isNull()
         knowledgeListRepository.addKnowledgeList(ex)
         knowledgeListRepository.addKnowledgeList(ex2)
-        assertThat(knowledgeListRepository.getKnowledgeListFromId("a")).isEqualTo(ex)
-        assertThat(knowledgeListRepository.getKnowledgeListFromId("d")).isEqualTo(ex2)
+        assertThat(knowledgeListRepository.getKnowledgeListFromId("a").getOrNull()).isEqualTo(ex)
+        assertThat(knowledgeListRepository.getKnowledgeListFromId("d").getOrNull()).isEqualTo(ex2)
     }
 }
