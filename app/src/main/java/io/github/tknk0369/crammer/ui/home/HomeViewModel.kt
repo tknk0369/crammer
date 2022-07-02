@@ -1,6 +1,5 @@
 package io.github.tknk0369.crammer.ui.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +20,12 @@ class HomeViewModel @Inject constructor(
             knowledgeListRepository.addKnowledgeList(
                 KnowledgeListEntity(UUID.randomUUID().toString(), name, "root")
             )
+        }
+    }
+
+    fun deleteKnowledgeList(knowledgeList: KnowledgeListEntity) {
+        viewModelScope.launch {
+            knowledgeListRepository.deleteKnowledgeList(knowledgeList)
         }
     }
 }

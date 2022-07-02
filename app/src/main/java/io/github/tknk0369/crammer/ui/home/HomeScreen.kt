@@ -148,12 +148,27 @@ fun HomeScreen(
                             )
                         },
                         trailing = {
+                            var expanded by rememberSaveable {
+                                mutableStateOf(false)
+                            }
                             IconButton(
                                 onClick = {
-
+                                    expanded = true
                                 }
                             ) {
                                 Icon(Icons.Default.MoreVert, contentDescription = "menu")
+                            }
+                            DropdownMenu(
+                                expanded = expanded,
+                                onDismissRequest = { expanded = false }
+                            ) {
+                                DropdownMenuItem(
+                                    onClick = {
+                                        viewModel.deleteKnowledgeList(it)
+                                    }
+                                ) {
+                                    Text("Delete")
+                                }
                             }
                         }
                     ) {
