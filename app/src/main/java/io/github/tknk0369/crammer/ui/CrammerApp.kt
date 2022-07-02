@@ -38,8 +38,8 @@ fun CrammerApp(
                 composable(
                     route = Screen.Detail.route,
                     arguments = listOf(navArgument("id") { type = NavType.StringType })
-                ) {
-                    DetailScreen(navHostController)
+                ) { backStackEntry ->
+                    DetailScreen(navHostController, backStackEntry.arguments?.getString("id"))
                 }
             }
         }
