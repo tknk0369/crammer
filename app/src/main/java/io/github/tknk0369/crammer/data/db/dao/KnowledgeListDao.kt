@@ -16,4 +16,7 @@ interface KnowledgeListDao {
 
     @Query("select * from knowledge_list")
     fun selectAll(): List<KnowledgeListEntity>
+
+    @Query("select * from knowledge_list where id = :id")
+    fun selectFromId(id: String): KnowledgeListEntity
 }

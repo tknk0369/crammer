@@ -73,4 +73,16 @@ class KnowledgeListRepositoryTest {
         knowledgeListRepository.updateKnowledgeList(ex2)
         Truth.assertThat(knowledgeListRepository.getKnowledgeLists()).isEqualTo(listOf(ex2))
     }
+
+    @Test
+    fun getKnowledgeListFromId() = runTest {
+        val ex = KnowledgeListEntity("a", "b", "c")
+        val ex2 = KnowledgeListEntity("d", "e", "f")
+        Truth.assertThat(knowledgeListRepository.getKnowledgeListFromId("a")).isNull()
+        Truth.assertThat(knowledgeListRepository.getKnowledgeListFromId("a")).isNull()
+        knowledgeListRepository.addKnowledgeList(ex)
+        knowledgeListRepository.addKnowledgeList(ex2)
+        Truth.assertThat(knowledgeListRepository.getKnowledgeListFromId("a")).isEqualTo(ex)
+        Truth.assertThat(knowledgeListRepository.getKnowledgeListFromId("d")).isEqualTo(ex2)
+    }
 }

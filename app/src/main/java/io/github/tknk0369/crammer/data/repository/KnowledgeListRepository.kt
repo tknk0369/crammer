@@ -14,6 +14,8 @@ interface KnowledgeListRepository {
     suspend fun updateKnowledgeList(knowledgeList: KnowledgeListEntity)
 
     suspend fun deleteKnowledgeList(knowledgeList: KnowledgeListEntity)
+
+    suspend fun getKnowledgeListFromId(id: String): KnowledgeListEntity
 }
 
 class KnowledgeListRepositoryImpl @Inject constructor() : KnowledgeListRepository {
@@ -22,7 +24,7 @@ class KnowledgeListRepositoryImpl @Inject constructor() : KnowledgeListRepositor
 
     override fun getKnowledgeLists(): List<KnowledgeListEntity> = knowledgeListDao.selectAll()
 
-    override suspend fun addKnowledgeList(knowledgeList: KnowledgeListEntity){
+    override suspend fun addKnowledgeList(knowledgeList: KnowledgeListEntity) {
         withContext(Dispatchers.IO) {
             knowledgeListDao.insert(knowledgeList)
         }
@@ -37,6 +39,12 @@ class KnowledgeListRepositoryImpl @Inject constructor() : KnowledgeListRepositor
     override suspend fun deleteKnowledgeList(knowledgeList: KnowledgeListEntity) {
         withContext(Dispatchers.IO) {
             knowledgeListDao.delete(knowledgeList)
+        }
+    }
+
+    override suspend fun getKnowledgeListFromId(id: String): KnowledgeListEntity {
+        return withContext(Dispatchers.IO) {
+            knowledgeListDao.selectFromId(id)
         }
     }
 }

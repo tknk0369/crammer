@@ -59,4 +59,16 @@ class KnowledgeListDatabaseTest {
         knowledgeListDao.update(ex2)
         assertThat(knowledgeListDao.selectAll()).isEqualTo(listOf(ex2))
     }
+
+    @Test
+    fun selectFromId() = runTest {
+        val ex = KnowledgeListEntity("a", "b", "c")
+        val ex2 = KnowledgeListEntity("d", "e", "f")
+        assertThat(knowledgeListDao.selectFromId("a")).isNull()
+        assertThat(knowledgeListDao.selectFromId("d")).isNull()
+        knowledgeListDao.insert(ex)
+        knowledgeListDao.insert(ex2)
+        assertThat(knowledgeListDao.selectFromId("a")).isEqualTo(ex)
+        assertThat(knowledgeListDao.selectFromId("d")).isEqualTo(ex2)
+    }
 }
