@@ -20,6 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
+import io.github.tknk0369.crammer.ui.Screen
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -134,7 +135,9 @@ fun HomeScreen(
             LazyColumn(modifier = Modifier.padding(paddingValues)) {
                 items(items = items, key = { it }) {
                     ListItem(
-                        modifier = Modifier.clickable { },
+                        modifier = Modifier.clickable {
+                            navHostController.navigate(Screen.Detail.createRoute(it))
+                        },
                         icon = {
                             Icon(
                                 Icons.Default.List,
