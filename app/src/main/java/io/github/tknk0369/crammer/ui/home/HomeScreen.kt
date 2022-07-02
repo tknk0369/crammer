@@ -19,6 +19,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.github.tknk0369.crammer.ui.Screen
 import kotlinx.coroutines.CoroutineScope
@@ -30,7 +31,9 @@ fun HomeScreen(
     navHostController: NavHostController,
     modalBottomSheetState: ModalBottomSheetState = rememberModalBottomSheetState(initialValue = ModalBottomSheetValue.Hidden),
     coroutineScope: CoroutineScope = rememberCoroutineScope(),
+    viewModel: HomeViewModel = hiltViewModel()
 ) {
+    val knowledgeList = viewModel.knowledgeList.collectAsState(initial = listOf())
     var newListDialog by rememberSaveable { mutableStateOf(false) }
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
@@ -101,6 +104,7 @@ fun HomeScreen(
                             }
                             TextButton(
                                 onClick = {
+                                    viewModel.addNewKnowledgeList(name)
                                     newListDialog = false
                                 }
                             ) {
@@ -131,12 +135,11 @@ fun HomeScreen(
                 }
             }
         ) { paddingValues ->
-            val items = listOf("a", "b", "c", "d", "e", "f", "g")
             LazyColumn(modifier = Modifier.padding(paddingValues)) {
-                items(items = items, key = { it }) {
+                items(items = knowledgeList.value, key = { it.id }) {
                     ListItem(
                         modifier = Modifier.clickable {
-                            navHostController.navigate(Screen.Detail.createRoute(it))
+                            navHostController.navigate(Screen.Detail.createRoute(it.id))
                         },
                         icon = {
                             Icon(
@@ -154,7 +157,7 @@ fun HomeScreen(
                             }
                         }
                     ) {
-                        Text(text = it)
+                        Text(text = it.name)
                     }
                 }
             }
