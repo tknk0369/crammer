@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import io.github.tknk0369.crammer.ui.detail.DetailScreen
 import io.github.tknk0369.crammer.ui.home.HomeScreen
+import io.github.tknk0369.crammer.ui.test.TestScreen
 import io.github.tknk0369.crammer.ui.theme.CrammerTheme
 
 @ExperimentalMaterialApi
@@ -41,6 +42,12 @@ fun CrammerApp(
                 ) { backStackEntry ->
                     DetailScreen(navHostController, backStackEntry.arguments?.getString("id"))
                 }
+                composable(
+                    route = Screen.Test.route,
+                    arguments = listOf(navArgument("id") { type = NavType.StringType })
+                ) { backStackEntry ->
+                    TestScreen(navHostController, backStackEntry.arguments?.getString("id"))
+                }
             }
         }
     }
@@ -50,5 +57,9 @@ sealed class Screen(val route: String) {
     object Home : Screen(route = "home")
     object Detail : Screen(route = "detail/{id}") {
         fun createRoute(id: String) = "detail/$id"
+    }
+
+    object Test : Screen(route = "test/{id}") {
+        fun createRoute(id: String) = "test/$id"
     }
 }

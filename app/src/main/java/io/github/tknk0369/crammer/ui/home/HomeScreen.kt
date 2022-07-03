@@ -1,7 +1,9 @@
 package io.github.tknk0369.crammer.ui.home
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -13,12 +15,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.github.tknk0369.crammer.ui.Screen
@@ -123,6 +120,15 @@ fun HomeScreen(
                             ) {
                                 DropdownMenuItem(
                                     onClick = {
+                                        expanded = false
+                                        navHostController.navigate(Screen.Test.createRoute(it.id))
+                                    }
+                                ) {
+                                    Text("Test")
+                                }
+                                DropdownMenuItem(
+                                    onClick = {
+                                        expanded = false
                                         rename = true
                                     }
                                 ) {
@@ -130,6 +136,7 @@ fun HomeScreen(
                                 }
                                 DropdownMenuItem(
                                     onClick = {
+                                        expanded = false
                                         viewModel.deleteKnowledgeList(it)
                                     }
                                 ) {
