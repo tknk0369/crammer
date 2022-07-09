@@ -81,19 +81,33 @@ class KnowledgeRepositoryTest {
         val list = mutableListOf<List<KnowledgeEntity>>()
         val ex = KnowledgeEntity("a", "id", "c", "d")
         val ex2 = KnowledgeEntity("a", "id", "g", "h")
-        knowledgeRepository.getKnowledgeFromListIdFlow("id").take(4).collectIndexed { index, value ->
-            list.add(value)
-            when (index) {
-                0 -> knowledgeRepository.addKnowledge(ex)
-                1 -> knowledgeRepository.updateKnowledge(ex2)
-                2 -> knowledgeRepository.deleteKnowledge(ex2)
+        knowledgeRepository.getKnowledgeFromListIdFlow("id").take(4)
+            .collectIndexed { index, value ->
+                list.add(value)
+                when (index) {
+                    0 -> knowledgeRepository.addKnowledge(ex)
+                    1 -> knowledgeRepository.updateKnowledge(ex2)
+                    2 -> knowledgeRepository.deleteKnowledge(ex2)
+                }
             }
-        }
         assertThat(list).containsExactly(
             listOf<KnowledgeEntity>(),
             listOf(ex),
             listOf(ex2),
             listOf<KnowledgeEntity>(),
         )
+    }
+
+    @Test
+    fun getKnowledgeFromListId() = runTest {
+        val ex = KnowledgeEntity("a", "id", "c", "d")
+        val ex2 = KnowledgeEntity("b", "id", "g", "h")
+        val ex3 = KnowledgeEntity("c", "id2", "g", "h")
+        knowledgeRepository.addKnowledge(ex)
+        knowledgeRepository.addKnowledge(ex2)
+        knowledgeRepository.addKnowledge(ex3)
+        assertThat(knowledgeRepository.getKnowledgeFromListId("id")).containsExactly(ex, ex2)
+        assertThat(knowledgeRepository.getKnowledgeFromListId("id2")).containsExactly(ex3)
+        assertThat(knowledgeRepository.getKnowledge()).containsExactly(ex, ex2, ex3)
     }
 }

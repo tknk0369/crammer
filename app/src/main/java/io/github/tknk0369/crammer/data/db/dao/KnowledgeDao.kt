@@ -20,4 +20,7 @@ interface KnowledgeDao {
 
     @Query("select * from knowledge where listId = :listId")
     fun selectFromListIdFlow(listId: String): Flow<List<KnowledgeEntity>>
+
+    @Query("select * from knowledge where listId = :listId")
+    fun selectFromListId(listId: String): List<KnowledgeEntity>
 }

@@ -91,4 +91,17 @@ class KnowledgeDatabaseTest {
             listOf<KnowledgeEntity>(),
         )
     }
+
+    @Test
+    fun selectFromListId() = runTest {
+        val ex = KnowledgeEntity("a", "id", "c", "d")
+        val ex2 = KnowledgeEntity("b", "id", "g", "h")
+        val ex3 = KnowledgeEntity("c", "id2", "g", "h")
+        knowledgeDao.insert(ex)
+        knowledgeDao.insert(ex2)
+        knowledgeDao.insert(ex3)
+        assertThat(knowledgeDao.selectFromListId("id")).containsExactly(ex, ex2)
+        assertThat(knowledgeDao.selectFromListId("id2")).containsExactly(ex3)
+        assertThat(knowledgeDao.selectAll()).containsExactly(ex, ex2, ex3)
+    }
 }
