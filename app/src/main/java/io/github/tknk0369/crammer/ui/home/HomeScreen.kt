@@ -1,5 +1,7 @@
 package io.github.tknk0369.crammer.ui.home
 
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +17,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
@@ -90,12 +93,17 @@ fun HomeScreen(
         ) { paddingValues ->
             LazyColumn(modifier = Modifier.padding(paddingValues)) {
                 items(items = knowledgeList.value, key = { it.id }) {
+                    val context = LocalContext.current
                     var rename by rememberSaveable {
                         mutableStateOf(false)
                     }
                     var expanded by rememberSaveable {
                         mutableStateOf(false)
                     }
+                    val launcher = rememberLauncherForActivityResult(
+                        contract = ActivityResultContracts.CreateDocument("text/csv"),
+                        onResult = { uri -> viewModel.saveKnowledgeAsCSV(it.id, uri, context) }
+                    )
                     ListItem(
                         modifier = Modifier.clickable {
                             navHostController.navigate(Screen.Detail.createRoute(it.id))
@@ -125,6 +133,14 @@ fun HomeScreen(
                                     }
                                 ) {
                                     Text("Test")
+                                }
+                                DropdownMenuItem(
+                                    onClick = {
+                                        expanded = false
+                                        launcher.launch("${it.name}.csv")
+                                    }
+                                ) {
+                                    Text("Export")
                                 }
                                 DropdownMenuItem(
                                     onClick = {
