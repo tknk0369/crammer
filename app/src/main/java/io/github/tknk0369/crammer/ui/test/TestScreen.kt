@@ -32,6 +32,7 @@ fun TestScreen(
     val knowledge by viewModel.knowledge.collectAsState()
     val randomKnowledge = knowledge.shuffled()
     var number by rememberSaveable { mutableStateOf(0) }
+    var expanded by rememberSaveable { mutableStateOf(false) }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -63,6 +64,7 @@ fun TestScreen(
                 Button(
                     onClick = {
                         number -= 1
+                        expanded = false
                     },
                     enabled = number != 0
                 ) {
@@ -71,13 +73,13 @@ fun TestScreen(
                 Button(
                     onClick = {
                         number += 1
+                        expanded = false
                     },
                     enabled = knowledge.size - 1 != number
                 ) {
                     Text(text = "Next")
                 }
             }
-            var expanded by rememberSaveable { mutableStateOf(false) }
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -124,16 +126,18 @@ fun TestScreen(
                                     .fillMaxWidth()
                                     .padding(4.dp)
                             )
-                            Text(
-                                text = try {
-                                    randomKnowledge[number].answer
-                                } catch (e: Exception) {
-                                    e.toString()
-                                },
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(4.dp)
-                            )
+                            if(expanded) {
+                                Text(
+                                    text = try {
+                                        randomKnowledge[number].answer
+                                    } catch (e: Exception) {
+                                        e.toString()
+                                    },
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(4.dp)
+                                )
+                            }
                         }
                     }
                 }
