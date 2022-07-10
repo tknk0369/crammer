@@ -106,8 +106,10 @@ class KnowledgeRepositoryTest {
         knowledgeRepository.addKnowledge(ex)
         knowledgeRepository.addKnowledge(ex2)
         knowledgeRepository.addKnowledge(ex3)
-        assertThat(knowledgeRepository.getKnowledgeFromListId("id")).containsExactly(ex, ex2)
-        assertThat(knowledgeRepository.getKnowledgeFromListId("id2")).containsExactly(ex3)
+        assertThat(knowledgeRepository.getKnowledgeFromListId("id").getOrNull())
+            .containsExactly(ex, ex2)
+        assertThat(knowledgeRepository.getKnowledgeFromListId("id2").getOrNull())
+            .containsExactly(ex3)
         assertThat(knowledgeRepository.getKnowledge()).containsExactly(ex, ex2, ex3)
     }
 }

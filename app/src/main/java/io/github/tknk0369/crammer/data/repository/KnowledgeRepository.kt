@@ -10,13 +10,13 @@ import javax.inject.Inject
 interface KnowledgeRepository {
     fun getKnowledge(): List<KnowledgeEntity>
 
-    fun getKnowledgeFromListId(listId: String): List<KnowledgeEntity>
-
     suspend fun addKnowledge(knowledge: KnowledgeEntity)
 
     suspend fun updateKnowledge(knowledge: KnowledgeEntity)
 
     suspend fun deleteKnowledge(knowledge: KnowledgeEntity)
+
+    suspend fun getKnowledgeFromListId(listId: String): Result<List<KnowledgeEntity>>
 
     suspend fun getKnowledgeFromListIdFlow(listId: String): Flow<List<KnowledgeEntity>>
 }
@@ -26,9 +26,6 @@ class KnowledgeRepositoryImpl @Inject constructor() : KnowledgeRepository {
     lateinit var knowledgeDao: KnowledgeDao
 
     override fun getKnowledge(): List<KnowledgeEntity> = knowledgeDao.selectAll()
-
-    override fun getKnowledgeFromListId(listId: String): List<KnowledgeEntity> =
-        knowledgeDao.selectFromListId(listId)
 
     override suspend fun addKnowledge(knowledge: KnowledgeEntity) {
         withContext(Dispatchers.IO) {
@@ -47,6 +44,15 @@ class KnowledgeRepositoryImpl @Inject constructor() : KnowledgeRepository {
             knowledgeDao.delete(knowledge)
         }
     }
+
+    override suspend fun getKnowledgeFromListId(listId: String): Result<List<KnowledgeEntity>> {
+        return withContext(Dispatchers.IO) {
+            runCatching {
+                knowledgeDao.selectFromListId(listId)
+            }
+        }
+    }
+
 
     override suspend fun getKnowledgeFromListIdFlow(listId: String): Flow<List<KnowledgeEntity>> {
         return knowledgeDao.selectFromListIdFlow(listId)
