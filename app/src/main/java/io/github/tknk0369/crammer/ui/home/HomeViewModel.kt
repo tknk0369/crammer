@@ -5,12 +5,14 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.tknk0369.crammer.data.db.entity.KnowledgeEntity
 import io.github.tknk0369.crammer.data.db.entity.KnowledgeListEntity
 import io.github.tknk0369.crammer.data.repository.KnowledgeListRepository
 import io.github.tknk0369.crammer.data.repository.KnowledgeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.util.*
 import javax.inject.Inject
@@ -63,4 +65,34 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun importKnowledgeFromCSV(uri: Uri?, context: Context) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) {
+                runCatching {
+                    uri?.let {
+                        val listUuid = UUID.randomUUID().toString()
+                        val inputStream = context.contentResolver.openInputStream(uri)
+                        val inputStreamReader = InputStreamReader(inputStream)
+                        inputStreamReader
+                            .readText()
+                            .split("\n")
+                            .map { it.split(",").map { comma -> comma.trim() } }
+                            .forEach {
+                                val uuid = UUID.randomUUID().toString()
+                                try {
+                                    knowledgeRepository.addKnowledge(
+                                        KnowledgeEntity(uuid, listUuid, it[0], it[1])
+                                    )
+                                } catch (e: Exception) {}
+                            }
+                        knowledgeListRepository.addKnowledgeList(
+                            KnowledgeListEntity(listUuid, listUuid, "root")
+                        )
+                        inputStreamReader.close()
+                        inputStream?.close()
+                    }
+                }
+            }
+        }
+    }
 }

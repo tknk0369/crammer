@@ -11,14 +11,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toFile
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.github.tknk0369.crammer.ui.Screen
@@ -36,10 +35,16 @@ fun HomeScreen(
 ) {
     val knowledgeList = viewModel.knowledgeList.collectAsState(initial = listOf())
     var newListDialog by rememberSaveable { mutableStateOf(false) }
+
     ModalBottomSheetLayout(
         sheetState = modalBottomSheetState,
         sheetContent = {
             Column {
+                val context = LocalContext.current
+                val launcher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.OpenDocument(),
+                    onResult = { viewModel.importKnowledgeFromCSV(it, context) }
+                )
                 Spacer(modifier = Modifier.padding(4.dp))
                 ListItem(
                     modifier = Modifier.clickable {
@@ -51,6 +56,17 @@ fun HomeScreen(
                     icon = { Icon(Icons.Default.List, contentDescription = "Add New List") }
                 ) {
                     Text(text = "Add New List")
+                }
+                ListItem(
+                    modifier = Modifier.clickable {
+                        launcher.launch(arrayOf("text/csv"))
+                        coroutineScope.launch {
+                            modalBottomSheetState.hide()
+                        }
+                    },
+                    icon = { Icon(Icons.Default.FileUpload, contentDescription = "Import CSV") }
+                ) {
+                    Text(text = "Import CSV")
                 }
             }
         },
@@ -140,7 +156,7 @@ fun HomeScreen(
                                         launcher.launch("${it.name}.csv")
                                     }
                                 ) {
-                                    Text("Export")
+                                    Text("Export CSV")
                                 }
                                 DropdownMenuItem(
                                     onClick = {
