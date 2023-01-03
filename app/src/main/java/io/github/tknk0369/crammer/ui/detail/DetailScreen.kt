@@ -3,17 +3,17 @@ package io.github.tknk0369.crammer.ui.detail
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.FileUpload
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -22,7 +22,11 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import io.github.tknk0369.crammer.ui.components.EditDialog
@@ -50,6 +54,9 @@ fun DetailScreen(
         contract = ActivityResultContracts.OpenDocument(),
         onResult = { viewModel.importKnowledgeFromCSV(it, id, context) }
     )
+    val newDialog = remember {
+        mutableStateOf(false)
+    }
     Scaffold(
         topBar = {
             TopAppBar(
@@ -79,10 +86,11 @@ fun DetailScreen(
         floatingActionButton = {
             FloatingActionButton(
                 onClick = {
-                    coroutineScope.launch {
-                        scrollState.animateScrollToItem(0)
-                        questionFocusRequester.requestFocus()
-                    }
+//                    coroutineScope.launch {
+//                        scrollState.animateScrollToItem(0)
+//                        questionFocusRequester.requestFocus()
+//                    }
+                    newDialog.value = true
                 }
             ) {
                 Icon(Icons.Default.Add, contentDescription = "add")
@@ -91,17 +99,24 @@ fun DetailScreen(
     ) { paddingValues ->
         var newQuestion by rememberSaveable { mutableStateOf("") }
         var answer by rememberSaveable { mutableStateOf("") }
-        LazyColumn(
-            modifier = Modifier.padding(paddingValues),
-            state = scrollState
-        ) {
-            item {
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp)
+        if (newDialog.value) {
+            Dialog(onDismissRequest = { newDialog.value = false }) {
+                Surface(
+                    shape = RoundedCornerShape(8.dp)
                 ) {
-                    Column {
+                    Column(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                    ) {
+                        Text(
+                            text = "Add new question",
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(fontSize = 20.sp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(4.dp),
+                        )
                         OutlinedTextField(
                             value = newQuestion,
                             onValueChange = { newQuestion = it },
@@ -123,10 +138,6 @@ fun DetailScreen(
                                 }
                             ),
                             singleLine = true,
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent
-                            ),
                         )
                         OutlinedTextField(
                             value = answer,
@@ -148,43 +159,71 @@ fun DetailScreen(
                                 }
                             ),
                             singleLine = true,
-                            colors = TextFieldDefaults.outlinedTextFieldColors(
-                                focusedBorderColor = Color.Transparent,
-                                unfocusedBorderColor = Color.Transparent
-                            ),
                         )
+                        Row(
+                            horizontalArrangement = Arrangement.End,
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            TextButton(
+                                onClick = {
+                                    newDialog.value = false
+                                    newQuestion = ""
+                                    answer = ""
+                                }
+                            ) {
+                                Text(text = "Cancel")
+                            }
+                            TextButton(
+                                onClick = {
+                                    if (newQuestion.isNotEmpty()) {
+                                        if (answer.isNotEmpty()) {
+                                            viewModel.addKnowledge(newQuestion, answer, id)
+                                            newQuestion = ""
+                                            answer = ""
+                                        } else {
+                                            questionFocusRequester.requestFocus()
+                                        }
+                                    }
+                                }
+                            ) {
+                                Text(text = "Ok")
+                            }
+                        }
                     }
                 }
             }
-            items(items = knowledge, key = { it.id }) {
+        }
+        LazyColumn(
+            modifier = Modifier.padding(paddingValues),
+            state = scrollState
+        ) {
+            items(items = knowledge.sortedBy { it.question }, key = { it.id }) {
                 var edit by rememberSaveable { mutableStateOf(false) }
-                Card(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
                         .clickable { edit = true }
+                        .padding(8.dp)
                 ) {
-                    Column {
-                        Text(text = "question: ${it.question}", modifier = Modifier.padding(4.dp))
-                        Text(text = "answer: ${it.answer}", modifier = Modifier.padding(4.dp))
-                    }
-                    if (edit) {
-                        EditDialog(
-                            defaultQuestion = it.question,
-                            defaultAnswer = it.answer,
-                            title = "Edit question",
-                            onDismissRequest = { edit = false },
-                            cancel = { edit = false },
-                            ok = { question, answer ->
-                                edit = false
-                                viewModel.updateKnowledge(question, answer, it)
-                            },
-                            delete = {
-                                edit = false
-                                viewModel.deleteKnowledge(it)
-                            }
-                        )
-                    }
+                    Text(text = it.question, modifier = Modifier.padding(4.dp))
+                    Text(text = it.answer, modifier = Modifier.padding(4.dp))
+                }
+                if (edit) {
+                    EditDialog(
+                        defaultQuestion = it.question,
+                        defaultAnswer = it.answer,
+                        title = "Edit question",
+                        onDismissRequest = { edit = false },
+                        cancel = { edit = false },
+                        ok = { question, answer ->
+                            edit = false
+                            viewModel.updateKnowledge(question, answer, it)
+                        },
+                        delete = {
+                            edit = false
+                            viewModel.deleteKnowledge(it)
+                        }
+                    )
                 }
             }
         }

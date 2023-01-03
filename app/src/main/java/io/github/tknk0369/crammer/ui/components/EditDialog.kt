@@ -11,8 +11,11 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.focus.focusTarget
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -62,6 +65,7 @@ fun EditDialog(
                     value = question,
                     onValueChange = { question = it },
                     modifier = Modifier
+                        .focusTarget()
                         .focusRequester(questionFocusRequester)
                         .fillMaxWidth()
                         .padding(4.dp, 0.dp),
@@ -77,6 +81,7 @@ fun EditDialog(
                     value = answer,
                     onValueChange = { answer = it },
                     modifier = Modifier
+                        .focusTarget()
                         .focusRequester(answerFocusRequester)
                         .fillMaxWidth()
                         .padding(4.dp, 0.dp),
